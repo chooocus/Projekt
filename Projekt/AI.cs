@@ -182,7 +182,7 @@ namespace Projekt
             isOddPlansza = moves % 2 == 0 ? true : false;
             Ruch move = new Ruch(null, null);
             Pole[] nb = { new Pole(-1, 0), new Pole(1, 0), new Pole(0, -1), new Pole(0, 1) };
-            foreach(Pole pole in unblockedFreeCells)
+            foreach(Pole pole in unblockedFreeCells.ToList())
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -190,7 +190,7 @@ namespace Projekt
                     if (plansza.Pola[p2.X, p2.Y].zajety == false)
                     {
                         move = new Ruch(pole, p2);
-                        isOdd = CheckIfNumberOfBlockedFreeCellsCreatedByMoveIsOdd(plansza, move, unblockedFreeCells);
+                        isOdd = CheckIfNumberOfBlockedFreeCellsCreatedByMoveIsOdd(plansza, move, unblockedFreeCells, isOddPlansza);
                         if (isOdd == isOddPlansza)
                             return move;
 
@@ -208,7 +208,7 @@ namespace Projekt
             }
             return move;
         }
-        public static bool CheckIfNumberOfBlockedFreeCellsCreatedByMoveIsOdd(Plansza plansza, Ruch move, List<Pole> freeCells)
+        public static bool CheckIfNumberOfBlockedFreeCellsCreatedByMoveIsOdd(Plansza plansza, Ruch move, List<Pole> freeCells, bool isOddPlansza)
         {
             int blockedFreeCells = 0;
             Pole[] closeFriends = { new Pole(-1, 0), new Pole(1, 0), new Pole(0, -1), new Pole(0, 1) };
@@ -267,10 +267,14 @@ namespace Projekt
                 plansza.Pola[move.p2.X, move.p2.Y].zajety = false;
                 freeCells.Insert(l, move.p1);
                 freeCells.Insert(m, move.p2);
-                if (moves % 2 == 0)
+                if (moves % 2 == 0 && isOddPlansza == true)
                     return true;
-                else
+                else if (moves % 2 == 0 && isOddPlansza == false)
                     return false;
+                else if (moves % 2 != 0 && isOddPlansza == true)
+                    return false;
+                else if (moves % 2 != 0 && isOddPlansza == false)
+                    return true;
             }
             return (blockedFreeCells >=2 ? true : false);
         }
